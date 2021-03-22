@@ -9,6 +9,7 @@
         android:name=".MyApplication"
         android:label="flutter_acpcore_example"
         android:icon="@mipmap/ic_launcher">
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

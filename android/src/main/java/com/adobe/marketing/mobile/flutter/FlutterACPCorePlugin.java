@@ -24,13 +24,15 @@ import com.adobe.marketing.mobile.MobilePrivacyStatus;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
-public class FlutterACPCorePlugin implements MethodCallHandler {
+public class FlutterACPCorePlugin implements FlutterPlugin, MethodCallHandler{
 
     private String TAG = "FlutterACPCorePlugin";
     private String ACPCORE_TAG = "ACPCORE";
@@ -42,6 +44,12 @@ public class FlutterACPCorePlugin implements MethodCallHandler {
         FlutterACPIdentityPlugin.registerWith(registrar);
         FlutterACPLifecyclePlugin.registerWith(registrar);
         FlutterACPSignalPlugin.registerWith(registrar);
+    }
+
+    @Override
+    public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
+        final MethodChannel channel = new MethodChannel(binding.getBinaryMessenger(), "flutter_acpcore");
+        channel.setMethodCallHandler(this);
     }
 
     @Override
@@ -291,5 +299,10 @@ public class FlutterACPCorePlugin implements MethodCallHandler {
 
         Map params = (Map) arguments;
         MobileCore.updateConfiguration(params);
+    }
+
+    @Override
+    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+
     }
 }

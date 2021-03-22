@@ -22,17 +22,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
 
-public class FlutterACPIdentityPlugin implements MethodChannel.MethodCallHandler {
+public class FlutterACPIdentityPlugin implements FlutterPlugin, MethodChannel.MethodCallHandler {
 
     private String TAG = "FlutterACPIdentityPlugin";
 
     public static void registerWith(PluginRegistry.Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "flutter_acpidentity");
         channel.setMethodCallHandler(new FlutterACPIdentityPlugin());
+    }
+
+    @Override
+    public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
+        final MethodChannel channel = new MethodChannel(binding.getBinaryMessenger(), "flutter_acpidentity");
+        channel.setMethodCallHandler(this);
     }
 
     @Override
@@ -165,5 +173,10 @@ public class FlutterACPIdentityPlugin implements MethodChannel.MethodCallHandler
                 });
             }
         });
+    }
+
+    @Override
+    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+
     }
 }

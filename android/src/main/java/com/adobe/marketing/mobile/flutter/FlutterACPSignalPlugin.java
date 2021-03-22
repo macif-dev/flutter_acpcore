@@ -13,11 +13,13 @@ package com.adobe.marketing.mobile.flutter;
 
 import com.adobe.marketing.mobile.Signal;
 
+import androidx.annotation.NonNull;
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
 
-public class FlutterACPSignalPlugin implements MethodChannel.MethodCallHandler {
+public class FlutterACPSignalPlugin implements FlutterPlugin, MethodChannel.MethodCallHandler {
 
     static void registerWith(PluginRegistry.Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "flutter_acpsignal");
@@ -31,5 +33,16 @@ public class FlutterACPSignalPlugin implements MethodChannel.MethodCallHandler {
         } else {
             result.notImplemented();
         }
+    }
+
+    @Override
+    public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
+        final MethodChannel channel = new MethodChannel(binding.getBinaryMessenger(), "flutter_acpsignal");
+        channel.setMethodCallHandler(new FlutterACPSignalPlugin());
+    }
+
+    @Override
+    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+
     }
 }
