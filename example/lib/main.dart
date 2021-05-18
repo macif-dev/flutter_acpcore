@@ -47,6 +47,13 @@ class _MyAppState extends State<MyApp> {
       identityVersion = await FlutterACPIdentity.extensionVersion;
       lifecycleVersion = await FlutterACPLifecycle.extensionVersion;
       signalVersion = await FlutterACPSignal.extensionVersion;
+
+      setState(() {
+        _coreVersion = coreVersion;
+        _identityVersion = identityVersion;
+        _lifecycleVersion = lifecycleVersion;
+        _signalVersion = signalVersion;
+      });
     } on PlatformException {
       log("Failed to get extension versions");
     }
@@ -55,13 +62,6 @@ class _MyAppState extends State<MyApp> {
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
     if (!mounted) return;
-
-    setState(() {
-      _coreVersion = coreVersion;
-      _identityVersion = identityVersion;
-      _lifecycleVersion = lifecycleVersion;
-      _signalVersion = signalVersion;
-    });
   }
 
   Future<void> appendUrl() async {
@@ -145,29 +145,32 @@ class _MyAppState extends State<MyApp> {
 
     try {
       result = await FlutterACPCore.privacyStatus;
+      if (!mounted) return;
+
+      setState(() {
+        _privacyStatus = result.value;
+      });
     } on PlatformException {
       log("Failed to get privacy status");
     }
 
-    if (!mounted) return;
-    setState(() {
-      _privacyStatus = result.value;
-    });
   }
 
   Future<void> getIdentifiers() async {
-    List<ACPMobileVisitorId> result;
+    List<ACPMobileVisitorId>? result;
 
     try {
       result = await FlutterACPIdentity.identifiers;
+
+      if (!mounted) return;
+      setState(() {
+        _getIdentifiersResult = result.toString();
+      });
+
     } on PlatformException {
       log("Failed to get identifiers");
     }
 
-    if (!mounted) return;
-    setState(() {
-      _getIdentifiersResult = result.toString();
-    });
   }
 
   Future<void> setAdvertisingIdentifier() async {
@@ -175,7 +178,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> dispatchEvent() async {
-    bool result;
     final ACPExtensionEvent event = ACPExtensionEvent({
       "eventName": "testEventName",
       "eventType": "testEventType",
@@ -183,14 +185,13 @@ class _MyAppState extends State<MyApp> {
       "eventData": {"eventDataKey": "eventDataValue"}
     });
     try {
-      result = await FlutterACPCore.dispatchEvent(event);
+      await FlutterACPCore.dispatchEvent(event);
     } on PlatformException catch (e) {
       log("Failed to dispatch event '${e.message}''");
     }
   }
 
   Future<void> dispatchEventWithResponseCallback() async {
-    ACPExtensionEvent result;
     final ACPExtensionEvent event = ACPExtensionEvent({
       "eventName": "testEventName",
       "eventType": "testEventType",
@@ -198,14 +199,13 @@ class _MyAppState extends State<MyApp> {
       "eventData": {"eventDataKey": "eventDataValue"}
     });
     try {
-      result = await FlutterACPCore.dispatchEventWithResponseCallback(event);
+      await FlutterACPCore.dispatchEventWithResponseCallback(event);
     } on PlatformException catch (e) {
       log("Failed to dispatch event '${e.message}''");
     }
   }
 
   Future<void> dispatchResponseEvent() async {
-    bool result;
     final ACPExtensionEvent responseEvent = ACPExtensionEvent({
       "eventName": "testresponseEvent",
       "eventType": "testresponseEvent",
@@ -219,7 +219,7 @@ class _MyAppState extends State<MyApp> {
       "eventData": {"eventDataKey": "eventDataValue"}
     });
     try {
-      result = await FlutterACPCore.dispatchResponseEvent(
+      await FlutterACPCore.dispatchResponseEvent(
           responseEvent, requestEvent);
     } on PlatformException catch (e) {
       log("Failed to dispatch events '${e.message}''");
@@ -275,47 +275,47 @@ class _MyAppState extends State<MyApp> {
                     'ACPSignal extension version: ', '$_signalVersion\n'),
                 getRichText('SDK Identities = ', '$_sdkIdentities\n'),
                 getRichText('Privacy status = ', '$_privacyStatus\n'),
-                RaisedButton(
+                TextButton(
                   child: Text("FlutterACPCore.sdkIdentities"),
                   onPressed: () => getSdkIdentities(),
                 ),
-                RaisedButton(
+                TextButton(
                   child: Text("FlutterACPCore.privacyStatus"),
                   onPressed: () => getPrivacyStatus(),
                 ),
-                RaisedButton(
+                TextButton(
                   child: Text("FlutterACPCore.setLogLevel"),
                   onPressed: () =>
                       FlutterACPCore.setLogLevel(ACPLoggingLevel.ERROR),
                 ),
-                RaisedButton(
+                TextButton(
                   child: Text("FlutterACPCore.setPrivacyStatus(...)"),
                   onPressed: () =>
                       FlutterACPCore.setPrivacyStatus(ACPPrivacyStatus.OPT_IN),
                 ),
-                RaisedButton(
+                TextButton(
                   child: Text("FlutterACPCore.updateConfiguration(...)"),
                   onPressed: () =>
                       FlutterACPCore.updateConfiguration({"key": "value"}),
                 ),
-                RaisedButton(
+                TextButton(
                   child: Text("FlutterACPCore.setAdvertisingIdentifier(...)"),
                   onPressed: () => setAdvertisingIdentifier(),
                 ),
-                RaisedButton(
+                TextButton(
                   child: Text("FlutterACPCore.dispatchEvent(...)"),
                   onPressed: () => dispatchEvent(),
                 ),
-                RaisedButton(
+                TextButton(
                   child: Text(
                       "FlutterACPCore.dispatchEventWithResponseCallback(...)"),
                   onPressed: () => dispatchEventWithResponseCallback(),
                 ),
-                RaisedButton(
+                TextButton(
                   child: Text("FlutterACPCore.dispatchResponseEvent(...)"),
                   onPressed: () => dispatchResponseEvent(),
                 ),
-                RaisedButton(
+                TextButton(
                   child: Text("FlutterACPCore.downloadRules()"),
                   onPressed: () => downloadRules(),
                 ),
@@ -330,32 +330,32 @@ class _MyAppState extends State<MyApp> {
                 getRichText(
                     'Get URL variables result = ', '$_getUrlVariablesResult\n'),
                 getRichText('Identifiers = ', '$_getIdentifiersResult\n'),
-                RaisedButton(
+                TextButton(
                   child: Text("FlutterACPIdentity.appendToUrl(...)"),
                   onPressed: () => appendUrl(),
                 ),
-                RaisedButton(
+                TextButton(
                   child: Text("FlutterACPIdentity.identifiers"),
                   onPressed: () => getIdentifiers(),
                 ),
-                RaisedButton(
+                TextButton(
                   child: Text("FlutterACPIdentity.experienceCloudId"),
                   onPressed: () => getExperienceCloudId(),
                 ),
-                RaisedButton(
+                TextButton(
                   child: Text("FlutterACPIdentity.syncIdentifier(...)"),
                   onPressed: () => syncIdentifier(),
                 ),
-                RaisedButton(
+                TextButton(
                   child: Text("FlutterACPIdentity.syncIdentifiers(...)"),
                   onPressed: () => syncIdentifiers(),
                 ),
-                RaisedButton(
+                TextButton(
                   child: Text(
                       "FlutterACPIdentity.syncIdentifiersWithAuthState(...)"),
                   onPressed: () => syncIdentifiersWithAuthState(),
                 ),
-                RaisedButton(
+                TextButton(
                   child: Text("FlutterACPIdentity.urlVariables"),
                   onPressed: () => getUrlVariables(),
                 ),

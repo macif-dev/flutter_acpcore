@@ -13,7 +13,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_acpcore/flutter_acpidentity.dart';
 import 'package:flutter_acpcore/src/acpmobile_visitor_id.dart';
-import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   const MethodChannel channel = MethodChannel('flutter_acpidentity');
@@ -109,9 +108,12 @@ void main() {
     });
 
     test('returns correct result', () async {
-      List<ACPMobileVisitorId> ids = await FlutterACPIdentity.identifiers;
-      expect(ids[0].idOrigin, ACPMobileVisitorId(testIdOne).idOrigin);
-      expect(ids[1].idOrigin, ACPMobileVisitorId(testIdTwo).idOrigin);
+      List<ACPMobileVisitorId>? ids = await FlutterACPIdentity.identifiers;
+      expect(ids, isNotNull);
+      if(ids != null){
+        expect(ids[0].idOrigin, ACPMobileVisitorId(testIdOne).idOrigin);
+        expect(ids[1].idOrigin, ACPMobileVisitorId(testIdTwo).idOrigin);
+      }
     });
   });
 

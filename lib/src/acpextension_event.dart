@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 
 /// The ACPExtensionEvent class contains the event that is used by the internal Event Hub.
 class ACPExtensionEvent {
-  Map<dynamic, dynamic> _data;
+  late Map<dynamic, dynamic> _data;
 
   ACPExtensionEvent(this._data);
 
@@ -21,7 +21,7 @@ class ACPExtensionEvent {
       "eventName": eventName,
       "eventType": eventType,
       "eventSource": eventSource,
-      "eventData": eventData ?? {}
+      "eventData": eventData
     };
     this._data = eventConstructorData;
   }

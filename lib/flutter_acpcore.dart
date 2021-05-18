@@ -27,20 +27,20 @@ class FlutterACPCore {
   }
 
   /// This method sends a generic Analytics action tracking hit with context data.
-  static Future<void> trackAction(String action, {Map<String, String> data}) {
+  static Future<void> trackAction(String action, {Map<String, String>? data}) {
     return _channel.invokeMethod(
-        'track', {'type': 'action', 'name': action ?? "", 'data': data ?? {}});
+        'track', {'type': 'action', 'name': action, 'data': data ?? {}});
   }
 
   /// This method sends a generic Analytics state tracking hit with context data.
-  static Future<void> trackState(String state, {Map<String, String> data}) {
+  static Future<void> trackState(String state, {Map<String, String>? data}) {
     return _channel.invokeMethod(
-        'track', {'type': 'state', 'name': state ?? "", 'data': data ?? {}});
+        'track', {'type': 'state', 'name': state, 'data': data ?? {}});
   }
 
   /// Submits a generic event containing the provided IDFA with event type `generic.identity`.
   static Future<void> setAdvertisingIdentifier(String aid) async {
-    return _channel.invokeMethod<void>('setAdvertisingIdentifier', aid ?? "");
+    return _channel.invokeMethod<void>('setAdvertisingIdentifier', aid);
   }
 
   ///  Called by the extension public API to dispatch an event for other extensions or the internal SDK to consume. Any events dispatched by this call will not be processed until after `start` has been called.
@@ -110,6 +110,6 @@ class FlutterACPCore {
   ///
   /// @param  {Map<String, Object>} configMap configuration key/value pairs to be updated or added. A value of `null` has no effect.
   static Future<void> updateConfiguration(Map<String, Object> configMap) async {
-    await _channel.invokeMethod('updateConfiguration', configMap ?? {});
+    await _channel.invokeMethod('updateConfiguration', configMap);
   }
 }

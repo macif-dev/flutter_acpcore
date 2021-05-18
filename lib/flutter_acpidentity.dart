@@ -27,19 +27,19 @@ class FlutterACPIdentity {
 
   /// Appends Adobe visitor information to the query component of the specified URL.
   static Future<String> appendToUrl(String url) async {
-    return _channel.invokeMethod('appendToUrl', url ?? "");
+    final String appendToUrl = await _channel.invokeMethod('appendToUrl', url);
+    return appendToUrl;
   }
 
   /// Returns all customer identifiers that were previously synced with the Adobe Experience Cloud.
-  static Future<List<ACPMobileVisitorId>> get identifiers async {
-    final List<dynamic> result = await _channel.invokeListMethod<dynamic>(
+  static Future<List<ACPMobileVisitorId>?> get identifiers async {
+    final List<dynamic>? result = await _channel.invokeListMethod<dynamic>(
       'getIdentifiers',
     );
     return result
         ?.map<ACPMobileVisitorId>(
           (dynamic data) => ACPMobileVisitorId(data),
-        )
-        ?.toList();
+        ).toList();
   }
 
   /// Returns the Experience Cloud ID.
@@ -60,7 +60,7 @@ class FlutterACPIdentity {
 
   /// Updates the given customer IDs with the Adobe Experience Cloud ID Service.
   static Future<void> syncIdentifiers(Map<String, String> identifiers) async {
-    await _channel.invokeMethod<void>('syncIdentifiers', identifiers ?? {});
+    await _channel.invokeMethod<void>('syncIdentifiers', identifiers);
   }
 
   /// Updates the given customer IDs with the Adobe Experience Cloud ID Service.
@@ -68,7 +68,7 @@ class FlutterACPIdentity {
       Map<String, String> identifiers,
       ACPMobileVisitorAuthenticationState authState) async {
     await _channel.invokeMethod<void>('syncIdentifiersWithAuthState',
-        {'identifiers': identifiers ?? {}, 'authState': authState.value});
+        {'identifiers': identifiers, 'authState': authState.value});
   }
 
   /// Gets Visitor ID Service identifiers in URL query string form for consumption in hybrid mobile apps.
